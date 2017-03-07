@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="layout/layout_user">
+<head>
+    <title>.:: ad-extreme ::. - user [cadastrar anúncio ]</title>
+</head>
+<th:block layout:fragment="conteudo">
+    <div class="container">
+        <div class="col-md-offset-2 col-md-8">
+            <div class="alert alert-success alert-dismissible" role="alert" th:if="${not #strings.isEmpty(mensagem)}">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong><i class="fa fa-check" aria-hidden="true"></i></strong>
+                <span th:text="${mensagem}"></span>
+            </div>
+            <form class="form-horizontal" method="post" role="form" th:object="${anuncioForm}" th:action="@{/user/cadastrar/anuncio}">
+                <div class="alert alert-danger alert-dismissible" role="alert" th:if="${#fields.hasAnyErrors()}">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <ul class="list-unstyled">
+                        <th:block th:each="erro : ${#fields.detailedErrors()}">
+                            <li>
+                                <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                <span th:text="${erro.message}"></span>
+                            </li>
+                        </th:block>
+                    </ul>
+                </div>
+                <fieldset>
+                    <!-- Form Name -->
+                    <legend>Cadastrar Anúncio</legend>
+                    <!-- Text input-->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="titulo">Titulo</label>
+                        <div class="col-md-4">
+                            <input id="titulo" name="titulo" type="text" placeholder="Titulo do anuncio" class="form-control input-md" required="required"/>
+                        </div>
+                    </div>
+                    <!-- Text input-->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="preco">Preço</label>
+                        <div class="col-md-4">
+                            <input id="preco" name="preco" type="number" min="0.1"  step="any" placeholder="Preço" class="form-control input-md" required="required"/>
+                        </div>
+                    </div>
+                    <!-- Multiple Radios -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Tipo</label>
+                        <div class="col-md-4">
+                            <div class="radio" th:if="${anuncioForm.tipos != null}">
+                                <th:block th:object="${anuncioForm}">
+                                    <label for="radios-0" th:each="tipo : *{tipos}">
+                                        <input type="radio" name="tipo" id="radios-0" th:value="${tipo}"/>
+                                        <p th:text="${tipo}"></p>
+                                    </label>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Button (Double) -->
+                    <div class="form-group">
+                        <div class="col-md-8 col-md-offset-4">
+                            <button type="submit" id="cadastrar-se" name="cadastrar-se" class="btn btn-success">Cadastrar</button>
+                            <button type="reset" id="reset" name="reset" class="btn btn-danger">Limpar</button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+
+        </div>
+    </div>
+</th:block>
+</html>
