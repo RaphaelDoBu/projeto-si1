@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        lang="pt-br">
+<head>
+    <meta charset="UTF-8"/>
+    <title>.:: ad-extreme ::.</title>
+    <!--[if IE]><link rel="shortcut icon" th:href="@{img/favicon.ico}"/><![endif]-->
+    <link rel="icon" th:href="@{img/favicon.ico}"/>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}"  media="screen"/>
+    <link rel="stylesheet" th:href="@{/webjars/font-awesome/4.7.0/css/font-awesome.min.css}" media="screen"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}" media="screen"/>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <th:block layout:fragment="error"/>
+    </div>
+</div>
+<!-- init footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="logo"></div>
+        <p class="text-muted">© 2017 | Todos os Direitos Reservados | <i class="fa fa-usd" aria-hidden="true"></i> ad-extreme</p>
+    </div>
+</footer>
+<!-- end footer -->
+<script th:src="@{/webjars/jquery/1.12.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}" ></script>
+<th:block layout:fragment="js-extra"></th:block>
+</body>
+</html>

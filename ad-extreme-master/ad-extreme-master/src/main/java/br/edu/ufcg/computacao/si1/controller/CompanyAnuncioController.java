@@ -56,6 +56,17 @@ public class CompanyAnuncioController {
         attributes.addFlashAttribute("mensagem", "Anúncio cadastrado com sucesso!");
         return new ModelAndView("redirect:/company/cadastrar/anuncio");
     }
+    
+    @RequestMapping(value = "/company/listar/anuncios/tipo", method = RequestMethod.GET)
+    public ModelAndView buscarAnunciosPorTipo(String tipo){
+        ModelAndView model = new ModelAndView();
+
+        model.addObject("anuncios", anuncioService.getAnuncioRepository().findAll());
+
+        model.setViewName("company/listar_anuncios");
+
+        return model;
+    }
 
 
 }

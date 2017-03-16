@@ -12,7 +12,7 @@ import java.util.Date;
 @Table(name="tb_anuncio")
 public class Anuncio {
 
-    private static final String[] tipos = new String[] {"movel", "imovel", "emprego"};
+    private static final String[] tipos = new String[] {"movel", "imovel", "emprego", "serviço"};
 
 
     private final static DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
