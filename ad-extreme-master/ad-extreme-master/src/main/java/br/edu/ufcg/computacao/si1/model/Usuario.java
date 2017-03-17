@@ -24,7 +24,7 @@ public class Usuario extends org.springframework.security.core.userdetails.User{
     private String role;
 
     public Usuario() {
-        super("default", "default", AuthorityUtils.createAuthorityList("USER"));
+        super("teste", "default", AuthorityUtils.createAuthorityList("USER"));
     }
 
     public Usuario(String nome, String email, String senha, String role) {
@@ -76,5 +76,13 @@ public class Usuario extends org.springframework.security.core.userdetails.User{
     public void setR(String r) {
         this.role = r;
     }
+
+	@Override
+	public String toString() {
+		return "Usuario [id=" + id + ", nome=" + nome + ", email=" + email + ", senha=" + senha + ", role=" + role
+				+ "]";
+	}
+    
+    
 
 }
