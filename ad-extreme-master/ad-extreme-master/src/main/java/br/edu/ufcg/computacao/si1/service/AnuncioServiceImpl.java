@@ -2,6 +2,7 @@ package br.edu.ufcg.computacao.si1.service;
 
 import br.edu.ufcg.computacao.si1.model.Anuncio;
 import br.edu.ufcg.computacao.si1.repository.AnuncioRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +35,7 @@ public class AnuncioServiceImpl implements AnuncioService {
         /*aqui salvamos o anuncio recem criado no repositorio jpa*/
         return anuncioRepository.save(anuncio);
     }
-
+    
     @Override
     public Optional<Anuncio> getById(Long id) {
         /*aqui recuperamos o anuncio pelo seu id*/

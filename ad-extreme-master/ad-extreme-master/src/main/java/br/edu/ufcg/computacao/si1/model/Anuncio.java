@@ -1,6 +1,9 @@
 package br.edu.ufcg.computacao.si1.model;
 
 import javax.persistence.*;
+
+import br.edu.ufcg.computacao.si1.controller.UsuarioController;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,6 +24,9 @@ public class Anuncio {
     @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "_id", nullable = false, unique = true)
     private Long _id;
+    
+    @Column(name = "idUsuario", nullable = false)
+    private Long idUsuario;
 
     @Column(name = "titulo", nullable = false)
     private String titulo;
@@ -37,12 +43,16 @@ public class Anuncio {
     @Column(name = "tipo", nullable = false)
     private String tipo;
 
-    public Anuncio(String titulo, Date dataDeCriacao, double preco, String nota, String tipo) {
-        this.titulo = titulo;
+    UsuarioController uc = new UsuarioController();
+    
+    public Anuncio(String titulo, Date dataDeCriacao, double preco, String nota, String tipo, long idUsuario) {
+        //this.titulo = ;
+    	this.titulo = titulo;
         this.dataDeCriacao = dataDeCriacao;
         this.preco = preco;
         this.nota = nota;
         this.tipo = tipo;
+        this.idUsuario = idUsuario;
     }
 
     public Anuncio() {
@@ -51,6 +61,7 @@ public class Anuncio {
         preco = 0;
         nota = "";
         tipo = "";
+        this.idUsuario = (long)-1;
     }
 
     /**
@@ -106,6 +117,14 @@ public class Anuncio {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+    
+    public Long getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(Long idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     @Override

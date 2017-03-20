@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.User;
 import br.edu.ufcg.computacao.si1.model.Usuario;
 
 public class UsuarioController implements Serializable {
+	
 	private Usuario usuario;
 	
 	public UsuarioController(){
@@ -20,7 +21,7 @@ public class UsuarioController implements Serializable {
 			Authentication authentication = context.getAuthentication();
 			if(authentication instanceof Authentication)
 			{
-				 usuario.setN(((User)authentication.getPrincipal()).getUsername());
+				 usuario.setEmail(((User)authentication.getPrincipal()).getUsername());
 			}
 		}
 	}
@@ -32,4 +33,5 @@ public class UsuarioController implements Serializable {
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
+
 }

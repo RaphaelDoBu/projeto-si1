@@ -1,7 +1,9 @@
 package br.edu.ufcg.computacao.si1.controller;
 
 import br.edu.ufcg.computacao.si1.model.Anuncio;
+import br.edu.ufcg.computacao.si1.model.Usuario;
 import br.edu.ufcg.computacao.si1.model.form.AnuncioForm;
+import br.edu.ufcg.computacao.si1.repository.UsuarioRepository;
 import br.edu.ufcg.computacao.si1.service.AnuncioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,9 +17,12 @@ import javax.validation.Valid;
 
 @Controller
 public class CompanyAnuncioController {
-
+	
     @Autowired
     private AnuncioServiceImpl anuncioService;
+    
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @RequestMapping(value = "/company/cadastrar/anuncio", method = RequestMethod.GET)
     public ModelAndView getPageCadastarAnuncio(AnuncioForm anuncioForm){
@@ -42,7 +47,9 @@ public class CompanyAnuncioController {
 
     @RequestMapping(value = "/company/cadastrar/anuncio", method = RequestMethod.POST)
     public ModelAndView cadastroAnuncio(@Valid AnuncioForm anuncioForm, BindingResult result, RedirectAttributes attributes){
-        if(result.hasErrors()){
+    	UsuarioController uc = new UsuarioController();
+    	
+    	if(result.hasErrors()){
             return getPageCadastarAnuncio(anuncioForm);
         }
 
@@ -50,6 +57,11 @@ public class CompanyAnuncioController {
         anuncio.setTitulo(anuncioForm.getTitulo());
         anuncio.setPreco(anuncioForm.getPreco());
         anuncio.setTipo(anuncioForm.getTipo());
+        
+        Usuario usuario = usuarioRepository.findByEmail(uc.getUsuario().getEmail());
+        Long idUsuario = usuario.getId();
+        
+        anuncio.setIdUsuario(idUsuario);
 
         anuncioService.create(anuncio);
 

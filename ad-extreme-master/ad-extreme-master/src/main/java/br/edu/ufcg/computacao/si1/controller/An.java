@@ -1,8 +1,10 @@
 package br.edu.ufcg.computacao.si1.controller;
 
 import br.edu.ufcg.computacao.si1.model.Anuncio;
+import br.edu.ufcg.computacao.si1.model.Usuario;
 import br.edu.ufcg.computacao.si1.model.form.AnuncioForm;
 import br.edu.ufcg.computacao.si1.repository.AnuncioRepository;
+import br.edu.ufcg.computacao.si1.repository.UsuarioRepository;
 import br.edu.ufcg.computacao.si1.service.AnuncioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,9 @@ public class An {
 
     @Autowired
     private AnuncioServiceImpl anuncioService;
+    
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private AnuncioRepository anuncioRep;
@@ -46,7 +51,9 @@ public class An {
 
     @RequestMapping(value = "/user/cadastrar/anuncio", method = RequestMethod.POST)
     public ModelAndView cadastroAnuncio(@Valid AnuncioForm anuncioForm, BindingResult result, RedirectAttributes attributes){
-        if(result.hasErrors()){
+    	UsuarioController uc = new UsuarioController();
+    	
+    	if(result.hasErrors()){
             return getPageCadastrarAnuncio(anuncioForm);
         }
 
@@ -54,6 +61,11 @@ public class An {
         anuncio.setTitulo(anuncioForm.getTitulo());
         anuncio.setPreco(anuncioForm.getPreco());
         anuncio.setTipo(anuncioForm.getTipo());
+        
+        Usuario usuario = usuarioRepository.findByEmail(uc.getUsuario().getEmail());
+        Long idUsuario = usuario.getId();
+        
+        anuncio.setIdUsuario(idUsuario);
 
         anuncioService.create(anuncio);
 
