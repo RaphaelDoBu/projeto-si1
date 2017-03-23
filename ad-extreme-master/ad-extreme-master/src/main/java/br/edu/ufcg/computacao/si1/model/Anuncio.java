@@ -6,6 +6,7 @@ import br.edu.ufcg.computacao.si1.controller.UsuarioController;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -18,7 +19,7 @@ public class Anuncio {
     private static final String[] tipos = new String[] {"movel", "imovel", "emprego", "serviço"};
 
 
-    private final static DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
+    private final static DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -57,7 +58,7 @@ public class Anuncio {
 
     public Anuncio() {
         titulo = "";
-        dataDeCriacao = new Date();
+        dataDeCriacao = removeTime(new Date());
         preco = 0;
         nota = "";
         tipo = "";
@@ -167,5 +168,15 @@ public class Anuncio {
                 ", nota=" + nota +
                 ", tipo='" + tipo + '\'' +
                 '}';
+    }
+    
+    public static Date removeTime(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
     }
 }

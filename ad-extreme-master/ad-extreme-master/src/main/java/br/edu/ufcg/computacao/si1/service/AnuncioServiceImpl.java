@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -80,4 +82,11 @@ public class AnuncioServiceImpl implements AnuncioService {
         }
         return false;
     }
+
+	@Override
+	public Collection<Anuncio> getAnuncioByDateFormat(Date data) {
+		return anuncioRepository.getAnuncioByDataDeCriacao(data);
+	}
+
+	
 }

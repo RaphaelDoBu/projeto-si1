@@ -13,7 +13,7 @@ public class AnuncioForm {
 
     @NotNull(message = "O titulo não pode ser nulo.")
     @NotEmpty(message = "O titulo não pode esta vazio.")
-    @Size(min = 10, max = 100, message = "O titulo deve ter entre 2 e 100 caracters")
+    @Size(min = 2, max = 100, message = "O titulo deve ter entre 2 e 100 caracters") // tamanho minimo errado
     private String titulo;
     @NotNull(message = "O preçço não pode ser nulo.")
     @DecimalMin(value = "0.1", message = "O preço minimo é 0.1 para um anúncio.")

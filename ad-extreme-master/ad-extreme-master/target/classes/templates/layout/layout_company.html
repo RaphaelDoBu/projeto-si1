@@ -34,6 +34,19 @@
                     <ul class="dropdown-menu">
                         <li><a th:href="@{/company/cadastrar/anuncio}">Cadastrar</a></li>
                         <li><a th:href="@{/company/listar/anuncios}">Todos os Anúncios</a></li>
+                        <li><a th:href="@{/company/listar/anuncios/usuario}">Anúncios do Usuário</a></li>
+                        <li class="dropdown-header">Buscar Anúncio por Tipo</li>
+                        <li><a th:href="@{/company/listar/anuncios/movel}">Movel</a></li>
+                        <li><a th:href="@{/company/listar/anuncios/imovel}">Imovel</a></li>
+                        <li><a th:href="@{/company/listar/anuncios/emprego}">Emprego</a></li>
+                        <li><a th:href="@{/company/listar/anuncios/service}">Serviço</a></li>
+                        <li class="dropdown-header">Buscar Anúncio por Data</li>
+                        <li>
+                        	<form action="#" th:action="@{/company/listar/anuncios/data}" method="get">
+                        		<input type="date" name="data" id="data"/>
+                        		<input type="submit" value="Submit" />
+                        	</form>
+                        </li>
                     </ul>
                 </li>
             </ul>
