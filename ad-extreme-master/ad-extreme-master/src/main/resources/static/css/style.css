@@ -34,4 +34,25 @@ body > .container {
     padding-left: 15px;
 }
 
+.navbar-center {
+	width: 500px;
+	height: 50px;
+}
+
+.navbar-center li {
+	padding-top: 15px;
+	padding-left: 20px;
+}
+
+.entrada{
+	width: 960px;
+	height: 500px;
+	padding-left: 350px;
+	padding-top: 180px;
+}
+
+.entrada h1 {
+	display: inline;
+	padding-left: 5px;
+}
 
