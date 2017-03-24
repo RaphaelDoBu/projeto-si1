@@ -28,7 +28,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 @Controller
-public class An {
+public class UserAnuncioController {
 
     @Autowired
     private AnuncioServiceImpl anuncioService;

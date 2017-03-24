@@ -42,7 +42,7 @@ public class WebPagesController {
 
 		ModelAndView model = new ModelAndView();
 
-		mod.addAttribute("user", usuarioLogado.getN());
+		mod.addAttribute("user", usuarioLogado.getNome());
 		model.setViewName("user/index");
 
 		return model;
@@ -57,7 +57,7 @@ public class WebPagesController {
 		mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
 
 		ModelAndView model = new ModelAndView();
-		mod.addAttribute("user", usuarioLogado.getN());
+		mod.addAttribute("user", usuarioLogado.getNome());
 		model.setViewName("company/index");
 
 		return model;
