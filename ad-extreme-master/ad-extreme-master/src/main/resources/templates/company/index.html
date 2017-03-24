@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html
-        xmlns:th="http://www.thymeleaf.org"
-        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        layout:decorator="layout/layout_company">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/layout_company">
 <head>
-    <title>.:: ad-extreme ::. - company</title>
+<title>.:: ad-extreme ::. - company</title>
 </head>
 <th:block layout:fragment="conteudo">
-    <h1>Bem vindo </h1>
-    <script>console.log({nome})</script>
+	<h1>Bem vindo</h1>
+	<h1 th:text="${user}"></h1>
 </th:block>
 </html>
