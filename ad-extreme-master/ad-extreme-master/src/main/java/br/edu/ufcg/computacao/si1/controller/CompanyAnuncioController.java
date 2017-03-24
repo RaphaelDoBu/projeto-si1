@@ -3,10 +3,12 @@ package br.edu.ufcg.computacao.si1.controller;
 import br.edu.ufcg.computacao.si1.model.Anuncio;
 import br.edu.ufcg.computacao.si1.model.Usuario;
 import br.edu.ufcg.computacao.si1.model.form.AnuncioForm;
+import br.edu.ufcg.computacao.si1.repository.AnuncioRepository;
 import br.edu.ufcg.computacao.si1.repository.UsuarioRepository;
 import br.edu.ufcg.computacao.si1.service.AnuncioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,93 +25,130 @@ import javax.validation.Valid;
 
 @Controller
 public class CompanyAnuncioController {
-	
-    @Autowired
-    private AnuncioServiceImpl anuncioService;
-    
-    @Autowired
-    private UsuarioRepository usuarioRepository;
 
-    @RequestMapping(value = "/company/cadastrar/anuncio", method = RequestMethod.GET)
-    public ModelAndView getPageCadastarAnuncio(AnuncioForm anuncioForm){
-        ModelAndView model = new ModelAndView();
+	@Autowired
+	private AnuncioServiceImpl anuncioService;
+	@Autowired
+	private AnuncioRepository anuncioRep;
+	@Autowired
+	private UsuarioRepository usuarioRepository;
 
-        model.addObject("tipos", anuncioForm.getTipos());
-        model.setViewName("company/cadastrar_anuncio");
+	@RequestMapping(value = "/company/cadastrar/anuncio", method = RequestMethod.GET)
+	public ModelAndView getPageCadastarAnuncio(AnuncioForm anuncioForm) {
+		UsuarioController uc = new UsuarioController();
+		ModelAndView model = new ModelAndView();
+		Usuario usuarioLogado = usuarioRepository.findByEmail(uc.getUsuario().getEmail());
+		model.addObject("saldoCredor", usuarioLogado.getSaldoCredor());
+		model.addObject("saldoDevedor", usuarioLogado.getSaldoDevedor());
 
-        return model;
-    }
+		model.addObject("tipos", anuncioForm.getTipos());
+		model.setViewName("company/cadastrar_anuncio");
 
-    @RequestMapping(value = "/company/listar/anuncios", method = RequestMethod.GET)
-    public ModelAndView getPageListarAnuncios(){
-        ModelAndView model = new ModelAndView();
+		return model;
+	}
 
-        model.addObject("anuncios", anuncioService.getAnuncioRepository().findAll());
+	@RequestMapping(value = "/company/listar/anuncios", method = RequestMethod.GET)
+	public ModelAndView getPageListarAnuncios(Model mod) {
+		UsuarioController uc = new UsuarioController();
 
-        model.setViewName("company/listar_anuncios");
+		Usuario usuarioLogado = usuarioRepository.findByEmail(uc.getUsuario().getEmail());
+		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
+		mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
+		Long idUsuario = usuarioLogado.getId();
+		ModelAndView model = new ModelAndView();
 
-        return model;
-    }
+		model.addObject("anuncios", anuncioRep.findAll());
+		model.addObject("idUsuario", idUsuario);
 
-    @RequestMapping(value = "/company/cadastrar/anuncio", method = RequestMethod.POST)
-    public ModelAndView cadastroAnuncio(@Valid AnuncioForm anuncioForm, BindingResult result, RedirectAttributes attributes){
-    	
-    	if(result.hasErrors()){
-            return getPageCadastarAnuncio(anuncioForm);
-        }
+		model.setViewName("company/listar_anuncios");
 
-        Anuncio anuncio = new Anuncio();
-        anuncio.setTitulo(anuncioForm.getTitulo());
-        anuncio.setPreco(anuncioForm.getPreco());
-        anuncio.setTipo(anuncioForm.getTipo());
-        anuncio.setIdUsuario(getIdUsuario());
+		return model;
+	}
 
-        anuncioService.create(anuncio);
+	@RequestMapping(value = "/company/cadastrar/anuncio", method = RequestMethod.POST)
+	public ModelAndView cadastroAnuncio(@Valid AnuncioForm anuncioForm, BindingResult result,
+			RedirectAttributes attributes) {
+		UsuarioController uc = new UsuarioController();
 
-        attributes.addFlashAttribute("mensagem", "Anúncio cadastrado com sucesso!");
-        return new ModelAndView("redirect:/company/cadastrar/anuncio");
-    }
-    
-    @RequestMapping(value = "/company/listar/anuncios/{tipo}", method = RequestMethod.GET)
-    public ModelAndView buscarAnunciosPorTipo(@PathVariable String tipo){
-        ModelAndView model = new ModelAndView();
+		if (result.hasErrors()) {
+			return getPageCadastarAnuncio(anuncioForm);
+		}
 
-        model.addObject("anuncios", anuncioService.getAnuncioRepository().getAnuncioByTipo(tipo));
+		Anuncio anuncio = new Anuncio();
+		anuncio.setTitulo(anuncioForm.getTitulo());
+		anuncio.setPreco(anuncioForm.getPreco());
+		anuncio.setTipo(anuncioForm.getTipo());
 
-        model.setViewName("company/listar_anuncios");
+		Usuario usuario = usuarioRepository.findByEmail(uc.getUsuario().getEmail());
+		Long idUsuario = usuario.getId();
 
-        return model;
-    }
-    
-    @RequestMapping(value = "/company/listar/anuncios/data", method = RequestMethod.GET)
-    public ModelAndView buscarAnunciosPorData(@RequestParam("data") String data) throws ParseException{
-    	ModelAndView model = new ModelAndView();
-    	SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
-    	Date aux = formato.parse(data);
-        model.addObject("anuncios", anuncioService.getAnuncioRepository().getAnuncioByDataDeCriacao(aux));
+		anuncio.setIdUsuario(idUsuario);
 
-        model.setViewName("company/listar_anuncios");
+		anuncioService.create(anuncio);
+		attributes.addFlashAttribute("mensagem", "Anúncio cadastrado com sucesso!");
+		return new ModelAndView("redirect:/company/cadastrar/anuncio");
+	}
 
-        return model;
-    }
-    
-    // Listar anuncio por usuario
-    @RequestMapping(value = "/company/listar/anuncios/usuario", method = RequestMethod.GET)
-    public ModelAndView buscarAnunciosPorUsuario(){
-        ModelAndView model = new ModelAndView();
+	@RequestMapping(value = "/company/listar/anuncios/{tipo}", method = RequestMethod.GET)
+	public ModelAndView buscarAnunciosPorTipo(@PathVariable String tipo) {
+		ModelAndView model = new ModelAndView();
 
-        model.addObject("anuncios", anuncioService.getAnuncioRepository().getAnuncioByIdUsuario(getIdUsuario()));
+		model.addObject("anuncios", anuncioService.getAnuncioRepository().getAnuncioByTipo(tipo));
 
-        model.setViewName("company/listar_anuncios");
+		model.setViewName("company/listar_anuncios");
 
-        return model;
-    }
-    
-    public Long getIdUsuario(){
-    	UsuarioController uc = new UsuarioController();
-        Usuario usuario = usuarioRepository.findByEmail(uc.getUsuario().getEmail());
-        return usuario.getId();
-    }
+		return model;
+	}
 
+	@RequestMapping(value = "/company/listar/anuncios/data", method = RequestMethod.GET)
+	public ModelAndView buscarAnunciosPorData(@RequestParam("data") String data) throws ParseException {
+		ModelAndView model = new ModelAndView();
+		SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+		Date aux = formato.parse(data);
+		model.addObject("anuncios", anuncioService.getAnuncioRepository().getAnuncioByDataDeCriacao(aux));
+
+		model.setViewName("company/listar_anuncios");
+
+		return model;
+	}
+
+	// Listar anuncio por usuario
+	@RequestMapping(value = "/company/listar/anuncios/usuario", method = RequestMethod.GET)
+	public ModelAndView buscarAnunciosPorUsuario() {
+		ModelAndView model = new ModelAndView();
+
+		model.addObject("anuncios", anuncioService.getAnuncioRepository().getAnuncioByIdUsuario(getIdUsuario()));
+
+		model.setViewName("company/listar_anuncios");
+
+		return model;
+	}
+
+	public Long getIdUsuario() {
+		UsuarioController uc = new UsuarioController();
+		Usuario usuario = usuarioRepository.findByEmail(uc.getUsuario().getEmail());
+		return usuario.getId();
+	}
+
+	@RequestMapping(value = "/company/anuncio/comprado/{id}", method = RequestMethod.GET)
+	public ModelAndView comprarAnuncioCompany(@PathVariable Long id, Model model) {
+		UsuarioController uc = new UsuarioController();
+
+		Usuario usuarioLogado = usuarioRepository.findByEmail(uc.getUsuario().getEmail());
+		Long idUsuario = usuarioLogado.getId();
+
+		Anuncio recuperaAnuncio = anuncioRep.findOne(id);
+		// usuario logado compra o anuncio
+		usuarioLogado.compraAnuncio(recuperaAnuncio.getPreco());
+
+		// usuario que tem o anuncio vai vender
+		Usuario usuarioDonoAnuncio = usuarioRepository.findOne(recuperaAnuncio.getIdUsuario());
+		usuarioDonoAnuncio.vendeAnuncio(recuperaAnuncio.getPreco());
+
+		// excluir anuncio
+		anuncioRep.delete(id);
+
+		return new ModelAndView("redirect:/company/listar/anuncios");
+	}
 
 }

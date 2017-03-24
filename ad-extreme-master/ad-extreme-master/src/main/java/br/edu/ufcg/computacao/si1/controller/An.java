@@ -41,21 +41,31 @@ public class An {
 
     @RequestMapping(value = "/user/cadastrar/anuncio", method = RequestMethod.GET)
     public ModelAndView getPageCadastrarAnuncio(AnuncioForm anuncioForm){
-        ModelAndView model = new ModelAndView();
-
-        model.addObject("tipos", anuncioForm.getTipos());
-        model.setViewName("user/cadastrar_anuncio");
+    	UsuarioController uc = new UsuarioController();
+		ModelAndView model = new ModelAndView();
+		Usuario usuarioLogado = usuarioRepository.findByEmail(uc.getUsuario().getEmail());
+		model.addObject("saldoCredor", usuarioLogado.getSaldoCredor());
+    	model.addObject("saldoDevedor", usuarioLogado.getSaldoDevedor());
+		
+		model.addObject("tipos", anuncioForm.getTipos());
+		model.setViewName("user/cadastrar_anuncio");
 
         return model;
     }
 
     @RequestMapping(value = "/user/listar/anuncios", method = RequestMethod.GET)
-    public ModelAndView getPageListarAnuncios(){
-        ModelAndView model = new ModelAndView();
+    public ModelAndView getPageListarAnuncios(Model mod){
+    	UsuarioController uc = new UsuarioController();
 
-        model.addObject("anuncios", anuncioRep.findAll());
+		Usuario usuarioLogado = usuarioRepository.findByEmail(uc.getUsuario().getEmail());
+		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
+    	mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
+    	Long idUsuario = usuarioLogado.getId();
+		ModelAndView model = new ModelAndView();
 
-        model.setViewName("user/listar_anuncios");
+		model.addObject("anuncios", anuncioRep.findAll());
+		model.addObject("idUsuario", idUsuario);
+		model.setViewName("user/listar_anuncios");
 
         return model;
     }
@@ -63,18 +73,24 @@ public class An {
     @RequestMapping(value = "/user/cadastrar/anuncio", method = RequestMethod.POST)
     public ModelAndView cadastroAnuncio(@Valid AnuncioForm anuncioForm, BindingResult result, RedirectAttributes attributes){
     	
-    	if(result.hasErrors()){
-            return getPageCadastrarAnuncio(anuncioForm);
-        }
+    	UsuarioController uc = new UsuarioController();
 
-        Anuncio anuncio = new Anuncio();
-        anuncio.setTitulo(anuncioForm.getTitulo());
-        anuncio.setPreco(anuncioForm.getPreco());
-        anuncio.setTipo(anuncioForm.getTipo());
-        anuncio.setIdUsuario(getIdUsuario());
+		if (result.hasErrors()) {
+			return getPageCadastrarAnuncio(anuncioForm);
+		}
 
-        anuncioService.create(anuncio);
+		Anuncio anuncio = new Anuncio();
+		anuncio.setTitulo(anuncioForm.getTitulo());
+		anuncio.setPreco(anuncioForm.getPreco());
+		anuncio.setTipo(anuncioForm.getTipo());
 
+		Usuario usuario = usuarioRepository.findByEmail(uc.getUsuario().getEmail());
+		Long idUsuario = usuario.getId();
+
+		anuncio.setIdUsuario(idUsuario);
+
+		anuncioService.create(anuncio);
+		
         attributes.addFlashAttribute("mensagem", "Anúncio cadastrado com sucesso!");
         return new ModelAndView("redirect:/user/cadastrar/anuncio");
     }
@@ -118,6 +134,28 @@ public class An {
         Usuario usuario = usuarioRepository.findByEmail(uc.getUsuario().getEmail());
         return usuario.getId();
     }
+    
+
+	@RequestMapping(value = "/user/anuncio/comprado/{id}", method = RequestMethod.GET)
+	public ModelAndView comprarAnuncio(@PathVariable Long id, Model model) {
+		UsuarioController uc = new UsuarioController();
+
+		Usuario usuarioLogado = usuarioRepository.findByEmail(uc.getUsuario().getEmail());
+		Long idUsuario = usuarioLogado.getId();
+
+		Anuncio recuperaAnuncio = anuncioRep.findOne(id);
+		// usuario logado compra o anuncio
+		usuarioLogado.compraAnuncio(recuperaAnuncio.getPreco());
+
+		// usuario que tem o anuncio vai vender
+		Usuario usuarioDonoAnuncio = usuarioRepository.findOne(recuperaAnuncio.getIdUsuario());
+		usuarioDonoAnuncio.vendeAnuncio(recuperaAnuncio.getPreco());
+
+		// excluir anuncio
+		anuncioRep.delete(id);
+
+		return new ModelAndView("redirect:/user/listar/anuncios");
+	}
 
 
 }
