@@ -90,8 +90,18 @@ public class CompanyAnuncioController {
 	}
 
 	@RequestMapping(value = "/company/listar/anuncios/{tipo}", method = RequestMethod.GET)
-	public ModelAndView buscarAnunciosPorTipo(@PathVariable String tipo) {
+	public ModelAndView buscarAnunciosPorTipo(@PathVariable String tipo,
+			Model mod) {
+		UsuarioController uc = new UsuarioController();
+
+		Usuario usuarioLogado = usuarioRepository.findByEmail(uc.getUsuario().getEmail());
+		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
+    	mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
+    	Long idUsuario = usuarioLogado.getId();
 		ModelAndView model = new ModelAndView();
+
+		model.addObject("anuncios", anuncioRep.findAll());
+		model.addObject("idUsuario", idUsuario);
 
 		model.addObject("anuncios", anuncioService.getAnuncioRepository().getAnuncioByTipo(tipo));
 
@@ -101,8 +111,19 @@ public class CompanyAnuncioController {
 	}
 
 	@RequestMapping(value = "/company/listar/anuncios/data", method = RequestMethod.GET)
-	public ModelAndView buscarAnunciosPorData(@RequestParam("data") String data) throws ParseException {
+	public ModelAndView buscarAnunciosPorData(@RequestParam("data") String data,
+			Model mod) throws ParseException {
 		ModelAndView model = new ModelAndView();
+    	UsuarioController uc = new UsuarioController();
+
+		Usuario usuarioLogado = usuarioRepository.findByEmail(uc.getUsuario().getEmail());
+		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
+    	mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
+    	Long idUsuario = usuarioLogado.getId();
+    	
+		model.addObject("anuncios", anuncioRep.findAll());
+		model.addObject("idUsuario", idUsuario);
+
 		SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
 		Date aux = formato.parse(data);
 		model.addObject("anuncios", anuncioService.getAnuncioRepository().getAnuncioByDataDeCriacao(aux));
@@ -114,12 +135,22 @@ public class CompanyAnuncioController {
 
 	// Listar anuncio por usuario
 	@RequestMapping(value = "/company/listar/anuncios/usuario", method = RequestMethod.GET)
-	public ModelAndView buscarAnunciosPorUsuario() {
+	public ModelAndView buscarAnunciosPorUsuario(Model mod) {
+		UsuarioController uc = new UsuarioController();
+
+		Usuario usuarioLogado = usuarioRepository.findByEmail(uc.getUsuario().getEmail());
+		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
+    	mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
+    	Long idUsuario = usuarioLogado.getId();
 		ModelAndView model = new ModelAndView();
+
+		model.addObject("anuncios", anuncioRep.findAll());
+		model.addObject("idUsuario", idUsuario);
+
 
 		model.addObject("anuncios", anuncioService.getAnuncioRepository().getAnuncioByIdUsuario(getIdUsuario()));
 
-		model.setViewName("company/listar_anuncios");
+		model.setViewName("company/listar_meus_anuncios");
 
 		return model;
 	}
