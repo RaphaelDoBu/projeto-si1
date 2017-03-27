@@ -1,5 +1,6 @@
 package br.edu.ufcg.computacao.si1.service;
 
+import br.edu.ufcg.computacao.si1.controller.UsuarioController;
 import br.edu.ufcg.computacao.si1.model.Usuario;
 import br.edu.ufcg.computacao.si1.model.form.UsuarioForm;
 import br.edu.ufcg.computacao.si1.repository.UsuarioRepository;
@@ -76,5 +77,11 @@ public class UsuarioServiceImpl implements UsuarioService{
             return true;
         }
         return false;
+    }
+    
+    public Usuario usuarioLogadoEmail(){
+    	UsuarioController uc = new UsuarioController();
+		Usuario usuarioLogado = usuarioRepository.findByEmail(uc.getUsuario().getEmail());
+		return usuarioLogado;
     }
 }

@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,58 +23,60 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.Valid;
 
 @Controller
-public class CompanyAnuncioController {
+public class UsuarioAnuncioController {
 
 	@Autowired
 	private AnuncioServiceImpl anuncioService;
 	@Autowired
-	private AnuncioRepository anuncioRep;
-	@Autowired
 	private UsuarioRepository usuarioRepository;
+	@Autowired
+	private AnuncioRepository anuncioRep;
 	@Autowired
 	private UsuarioServiceImpl usuarioImpl;
 
-	@RequestMapping(value = "/company/cadastrar/anuncio", method = RequestMethod.GET)
-	public ModelAndView getPageCadastarAnuncio(AnuncioForm anuncioForm) {
+	@RequestMapping(value = "/user/cadastrar/anuncio", method = RequestMethod.GET)
+	public ModelAndView getPageCadastrarAnuncio(AnuncioForm anuncioForm) {
 		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
 		ModelAndView model = new ModelAndView();
-		
+
 		model.addObject("saldoCredor", usuarioLogado.getSaldoCredor());
 		model.addObject("saldoDevedor", usuarioLogado.getSaldoDevedor());
 
 		model.addObject("tipos", anuncioForm.getTipos());
-		model.setViewName("company/cadastrar_anuncio");
+		model.setViewName("user/cadastrar_anuncio");
 
 		return model;
 	}
 
-	@RequestMapping(value = "/company/listar/anuncios", method = RequestMethod.GET)
+	@RequestMapping(value = "/user/listar/anuncios", method = RequestMethod.GET)
 	public ModelAndView getPageListarAnuncios(Model mod) {
 		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
-		Long idUsuario = usuarioLogado.getId();
-		ModelAndView model = new ModelAndView();
-		
+
 		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
 		mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
+		Long idUsuario = usuarioLogado.getId();
+		ModelAndView model = new ModelAndView();
+
 		model.addObject("anuncios", anuncioRep.findAll());
 		model.addObject("idUsuario", idUsuario);
-
-		model.setViewName("company/listar_anuncios");
+		model.setViewName("user/listar_anuncios");
 
 		return model;
 	}
 
-	@RequestMapping(value = "/company/cadastrar/anuncio", method = RequestMethod.POST)
+	@RequestMapping(value = "/user/cadastrar/anuncio", method = RequestMethod.POST)
 	public ModelAndView cadastroAnuncio(@Valid AnuncioForm anuncioForm, BindingResult result,
 			RedirectAttributes attributes) {
 
 		if (result.hasErrors()) {
-			return getPageCadastarAnuncio(anuncioForm);
+			return getPageCadastrarAnuncio(anuncioForm);
 		}
 
 		Anuncio anuncio = new Anuncio();
@@ -82,43 +86,61 @@ public class CompanyAnuncioController {
 
 		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
 		Long idUsuario = usuarioLogado.getId();
+
 		anuncio.setIdUsuario(idUsuario);
+
 		anuncioService.create(anuncio);
-		
+
 		attributes.addFlashAttribute("mensagem", "Anúncio cadastrado com sucesso!");
-		return new ModelAndView("redirect:/company/cadastrar/anuncio");
+		return new ModelAndView("redirect:/user/cadastrar/anuncio");
 	}
 
-	@RequestMapping(value = "/company/listar/anuncios/{tipo}", method = RequestMethod.GET)
-	public ModelAndView buscarAnunciosPorTipo(@PathVariable String tipo,
-			Model mod) {
+	@RequestMapping(value = "/user/listar/anuncios/usuario", method = RequestMethod.GET)
+	public ModelAndView buscarAnunciosPorUsuario(Model mod) {
+
 		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
-		
+
+		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
+		mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
+		Long idUsuario = usuarioLogado.getId();
+		ModelAndView model = new ModelAndView();
+
+		model.addObject("anuncios", anuncioRep.findAll());
+		model.addObject("idUsuario", idUsuario);
+
+		model.addObject("anuncios", anuncioService.getAnuncioRepository().getAnuncioByIdUsuario(getIdUsuario()));
+
+		model.setViewName("user/listar_meus_anuncios");
+
+		return model;
+	}
+
+	@RequestMapping(value = "/user/listar/anuncios/{tipo}", method = RequestMethod.GET)
+	public ModelAndView buscarAnunciosPorTipo(@PathVariable String tipo, Model mod) {
+		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
 		Long idUsuario = usuarioLogado.getId();
 		ModelAndView model = new ModelAndView();
 		
 		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
-    	mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
-    	
+		mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
 		model.addObject("anuncios", anuncioRep.findAll());
 		model.addObject("idUsuario", idUsuario);
 
 		model.addObject("anuncios", anuncioService.getAnuncioRepository().getAnuncioByTipo(tipo));
 
-		model.setViewName("company/listar_anuncios");
+		model.setViewName("user/listar_anuncios");
 
 		return model;
 	}
 
-	@RequestMapping(value = "/company/listar/anuncios/data", method = RequestMethod.GET)
-	public ModelAndView buscarAnunciosPorData(@RequestParam("data") String data,
-			Model mod) throws ParseException {
+	@RequestMapping(value = "/user/listar/anuncios/data", method = RequestMethod.GET)
+	public ModelAndView buscarAnunciosPorData(@RequestParam("data") String data, Model mod) throws ParseException {
 		ModelAndView model = new ModelAndView();
 		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
-    	Long idUsuario = usuarioLogado.getId();
-    	
-    	mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
-    	mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
+		Long idUsuario = usuarioLogado.getId();
+		
+		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
+		mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
 		model.addObject("anuncios", anuncioRep.findAll());
 		model.addObject("idUsuario", idUsuario);
 
@@ -126,29 +148,7 @@ public class CompanyAnuncioController {
 		Date aux = formato.parse(data);
 		model.addObject("anuncios", anuncioService.getAnuncioRepository().getAnuncioByDataDeCriacao(aux));
 
-		model.setViewName("company/listar_anuncios");
-
-		return model;
-	}
-
-	// Listar anuncio por usuario
-	@RequestMapping(value = "/company/listar/anuncios/usuario", method = RequestMethod.GET)
-	public ModelAndView buscarAnunciosPorUsuario(Model mod) {
-		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
-		
-		Long idUsuario = usuarioLogado.getId();
-		ModelAndView model = new ModelAndView();
-
-		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
-    	mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
-  
-		model.addObject("anuncios", anuncioRep.findAll());
-		model.addObject("idUsuario", idUsuario);
-
-
-		model.addObject("anuncios", anuncioService.getAnuncioRepository().getAnuncioByIdUsuario(getIdUsuario()));
-
-		model.setViewName("company/listar_meus_anuncios");
+		model.setViewName("user/listar_anuncios");
 
 		return model;
 	}
@@ -158,8 +158,8 @@ public class CompanyAnuncioController {
 		return usuarioLogado.getId();
 	}
 
-	@RequestMapping(value = "/company/anuncio/comprado/{id}", method = RequestMethod.GET)
-	public ModelAndView comprarAnuncioCompany(@PathVariable Long id, Model model) {
+	@RequestMapping(value = "/user/anuncio/comprado/{id}", method = RequestMethod.GET)
+	public ModelAndView comprarAnuncio(@PathVariable Long id, Model model) {
 		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
 		
 		Long idUsuario = usuarioLogado.getId();
@@ -175,7 +175,7 @@ public class CompanyAnuncioController {
 		// excluir anuncio
 		anuncioRep.delete(id);
 
-		return new ModelAndView("redirect:/company/listar/anuncios");
+		return new ModelAndView("redirect:/user/listar/anuncios");
 	}
 
 }
