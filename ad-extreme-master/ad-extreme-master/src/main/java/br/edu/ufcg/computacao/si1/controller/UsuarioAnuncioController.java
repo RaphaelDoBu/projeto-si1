@@ -39,11 +39,11 @@ public class UsuarioAnuncioController {
 	@Autowired
 	private AnuncioRepository anuncioRep;
 	@Autowired
-	private UsuarioServiceImpl usuarioImpl;
+	private UsuarioServiceImpl usuarioServiceImpl;
 
 	@RequestMapping(value = "/user/cadastrar/anuncio", method = RequestMethod.GET)
 	public ModelAndView getPageCadastrarAnuncio(AnuncioForm anuncioForm) {
-		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
+		Usuario usuarioLogado = usuarioServiceImpl.usuarioLogadoEmail();
 		ModelAndView model = new ModelAndView();
 
 		model.addObject("saldoCredor", usuarioLogado.getSaldoCredor());
@@ -57,7 +57,7 @@ public class UsuarioAnuncioController {
 
 	@RequestMapping(value = "/user/listar/anuncios", method = RequestMethod.GET)
 	public ModelAndView getPageListarAnuncios(Model mod) {
-		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
+		Usuario usuarioLogado = usuarioServiceImpl.usuarioLogadoEmail();
 
 		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
 		mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
@@ -88,7 +88,7 @@ public class UsuarioAnuncioController {
 	@RequestMapping(value = "/user/listar/anuncios/usuario", method = RequestMethod.GET)
 	public ModelAndView buscarAnunciosPorUsuario(Model mod) {
 
-		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
+		Usuario usuarioLogado = usuarioServiceImpl.usuarioLogadoEmail();
 		Long idUsuario = usuarioLogado.getId();
 		ModelAndView model = new ModelAndView();
 
@@ -106,7 +106,7 @@ public class UsuarioAnuncioController {
 
 	@RequestMapping(value = "/user/listar/anuncios/{tipo}", method = RequestMethod.GET)
 	public ModelAndView buscarAnunciosPorTipo(@PathVariable String tipo, Model mod) {
-		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
+		Usuario usuarioLogado = usuarioServiceImpl.usuarioLogadoEmail();
 		Long idUsuario = usuarioLogado.getId();
 		ModelAndView model = new ModelAndView();
 		
@@ -125,7 +125,7 @@ public class UsuarioAnuncioController {
 	@RequestMapping(value = "/user/listar/anuncios/data", method = RequestMethod.GET)
 	public ModelAndView buscarAnunciosPorData(@RequestParam("data") String data, Model mod) throws ParseException {
 		ModelAndView model = new ModelAndView();
-		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
+		Usuario usuarioLogado = usuarioServiceImpl.usuarioLogadoEmail();
 		Long idUsuario = usuarioLogado.getId();
 		
 		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
@@ -143,26 +143,13 @@ public class UsuarioAnuncioController {
 	}
 
 	public Long getIdUsuario() {
-		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
+		Usuario usuarioLogado = usuarioServiceImpl.usuarioLogadoEmail();
 		return usuarioLogado.getId();
 	}
 
 	@RequestMapping(value = "/user/anuncio/comprado/{id}", method = RequestMethod.GET)
-	public ModelAndView comprarAnuncio(@PathVariable Long id, Model model) {
-		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
-		
-		Long idUsuario = usuarioLogado.getId();
-
-		Anuncio recuperaAnuncio = anuncioRep.findOne(id);
-		// usuario logado compra o anuncio
-		usuarioLogado.compraAnuncio(recuperaAnuncio.getPreco());
-
-		// usuario que tem o anuncio vai vender
-		Usuario usuarioDonoAnuncio = usuarioRepository.findOne(recuperaAnuncio.getIdUsuario());
-		usuarioDonoAnuncio.vendeAnuncio(recuperaAnuncio.getPreco());
-
-		// excluir anuncio
-		anuncioRep.delete(id);
+	public ModelAndView comprarAnuncio(@PathVariable Long id) {
+		anuncioService.compraAnuncio(id);
 
 		return new ModelAndView("redirect:/user/listar/anuncios");
 	}

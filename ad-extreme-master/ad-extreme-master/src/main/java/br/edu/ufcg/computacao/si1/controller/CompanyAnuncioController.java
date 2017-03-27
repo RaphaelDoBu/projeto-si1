@@ -133,11 +133,8 @@ public class CompanyAnuncioController {
 
 		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
     	mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
-  
 		model.addObject("anuncios", anuncioRep.findAll());
 		model.addObject("idUsuario", idUsuario);
-
-
 		model.addObject("anuncios", anuncioService.getAnuncioRepository().getAnuncioByIdUsuario(getIdUsuario()));
 
 		model.setViewName("company/listar_meus_anuncios");
@@ -151,21 +148,8 @@ public class CompanyAnuncioController {
 	}
 
 	@RequestMapping(value = "/company/anuncio/comprado/{id}", method = RequestMethod.GET)
-	public ModelAndView comprarAnuncioCompany(@PathVariable Long id, Model model) {
-		Usuario usuarioLogado = usuarioServiceImpl.usuarioLogadoEmail();
-		
-		Long idUsuario = usuarioLogado.getId();
-
-		Anuncio recuperaAnuncio = anuncioRep.findOne(id);
-		// usuario logado compra o anuncio
-		usuarioLogado.compraAnuncio(recuperaAnuncio.getPreco());
-
-		// usuario que tem o anuncio vai vender
-		Usuario usuarioDonoAnuncio = usuarioRepository.findOne(recuperaAnuncio.getIdUsuario());
-		usuarioDonoAnuncio.vendeAnuncio(recuperaAnuncio.getPreco());
-
-		// excluir anuncio
-		anuncioRep.delete(id);
+	public ModelAndView comprarAnuncioCompany(@PathVariable Long id) {
+		anuncioService.compraAnuncio(id);
 
 		return new ModelAndView("redirect:/company/listar/anuncios");
 	}

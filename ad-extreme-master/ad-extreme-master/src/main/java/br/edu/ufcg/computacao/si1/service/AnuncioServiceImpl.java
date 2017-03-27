@@ -21,85 +21,86 @@ import java.util.stream.Collectors;
  */
 @Service
 public class AnuncioServiceImpl implements AnuncioService {
-    //TODO add validity checks
+	// TODO add validity checks
 
 	@Autowired
-    private AnuncioRepository anuncioRepository;
+	private AnuncioRepository anuncioRepository;
 	@Autowired
 	private AnuncioServiceImpl anuncioService;
 	@Autowired
 	private UsuarioServiceImpl usuarioServiceImpl;
-	
-    @Autowired
-    public AnuncioServiceImpl(AnuncioRepository anuncioRepository) {
-        /*neste codigo apenas atribuimos o repositorio jpa ao atributo */
-        this.anuncioRepository = anuncioRepository;
-    }
+	@Autowired
+	private UsuarioRepository usuarioRepository;
 
-    public AnuncioRepository getAnuncioRepository(){
-        return this.anuncioRepository;
-    }
+	@Autowired
+	public AnuncioServiceImpl(AnuncioRepository anuncioRepository) {
+		/* neste codigo apenas atribuimos o repositorio jpa ao atributo */
+		this.anuncioRepository = anuncioRepository;
+	}
 
-    @Override
-    public Anuncio create(Anuncio anuncio) {
-        /*aqui salvamos o anuncio recem criado no repositorio jpa*/
-        return anuncioRepository.save(anuncio);
-    }
-    
-    @Override
-    public Optional<Anuncio> getById(Long id) {
-        /*aqui recuperamos o anuncio pelo seu id*/
-        return Optional.ofNullable(anuncioRepository.findOne(id));
-    }
+	public AnuncioRepository getAnuncioRepository() {
+		return this.anuncioRepository;
+	}
 
-    @Override
-    public Collection<Anuncio> get(String tipo) {
+	@Override
+	public Anuncio create(Anuncio anuncio) {
+		/* aqui salvamos o anuncio recem criado no repositorio jpa */
+		return anuncioRepository.save(anuncio);
+	}
 
-        /*pegamos aqui todos os anuncios, mas retornamos os anuncios por tipo
-        * filtrando o tipo, pelo equals, retornando um arrayLista*/
-        return anuncioRepository.findAll().stream()
-                .filter(anuncio -> anuncio.getTipo().equals(tipo))
-                .collect(Collectors.toCollection(ArrayList::new));
-    }
+	@Override
+	public Optional<Anuncio> getById(Long id) {
+		/* aqui recuperamos o anuncio pelo seu id */
+		return Optional.ofNullable(anuncioRepository.findOne(id));
+	}
 
-    @Override
-    public Collection<Anuncio> getAll() {
-        /*aqui retornamos todos os anuncios, sem distincao*/
+	@Override
+	public Collection<Anuncio> get(String tipo) {
 
-        return anuncioRepository.findAll();
-    }
+		/*
+		 * pegamos aqui todos os anuncios, mas retornamos os anuncios por tipo
+		 * filtrando o tipo, pelo equals, retornando um arrayLista
+		 */
+		return anuncioRepository.findAll().stream().filter(anuncio -> anuncio.getTipo().equals(tipo))
+				.collect(Collectors.toCollection(ArrayList::new));
+	}
 
-    @Override
-    public boolean update(Anuncio anuncio) {
-        /*a atualizacao do anuncio eh feita apenas se o anuncio ja existir*/
-        if (anuncioRepository.exists(anuncio.get_id())) {
-            anuncioRepository.save(anuncio);
-            return true;
-        }
-        return false;
-    }
+	@Override
+	public Collection<Anuncio> getAll() {
+		/* aqui retornamos todos os anuncios, sem distincao */
 
-    @Override
-    public boolean delete(Long id) {
-        /*aqui se apaga o anuncio se ele existir*/
+		return anuncioRepository.findAll();
+	}
 
+	@Override
+	public boolean update(Anuncio anuncio) {
+		/* a atualizacao do anuncio eh feita apenas se o anuncio ja existir */
+		if (anuncioRepository.exists(anuncio.get_id())) {
+			anuncioRepository.save(anuncio);
+			return true;
+		}
+		return false;
+	}
 
-        if (anuncioRepository.exists(id)) {
-            anuncioRepository.delete(id);
-            return true;
-        }
-        return false;
-    }
+	@Override
+	public boolean delete(Long id) {
+		/* aqui se apaga o anuncio se ele existir */
+
+		if (anuncioRepository.exists(id)) {
+			anuncioRepository.delete(id);
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	public Collection<Anuncio> getAnuncioByDateFormat(Date data) {
 		return anuncioRepository.getAnuncioByDataDeCriacao(data);
 	}
-	
 
-    @Override
-    public Anuncio cadastrarAnuncio(AnuncioForm anuncioForm) {
-    	Anuncio anuncio = new Anuncio();
+	@Override
+	public Anuncio cadastrarAnuncio(AnuncioForm anuncioForm) {
+		Anuncio anuncio = new Anuncio();
 		anuncio.setTitulo(anuncioForm.getTitulo());
 		anuncio.setPreco(anuncioForm.getPreco());
 		anuncio.setTipo(anuncioForm.getTipo());
@@ -107,9 +108,25 @@ public class AnuncioServiceImpl implements AnuncioService {
 		Usuario usuarioLogado = usuarioServiceImpl.usuarioLogadoEmail();
 		Long idUsuario = usuarioLogado.getId();
 		anuncio.setIdUsuario(idUsuario);
-		
-        return anuncioService.create(anuncio);
-    }
 
-	
+		return anuncioService.create(anuncio);
+	}
+
+	@Override
+	public void compraAnuncio(Long id) {
+		Usuario usuarioLogado = usuarioServiceImpl.usuarioLogadoEmail();
+
+		Anuncio recuperaAnuncio = anuncioRepository.findOne(id);
+		// usuario logado compra o anuncio
+		usuarioLogado.compraAnuncio(recuperaAnuncio.getPreco());
+
+		// usuario que tem o anuncio vai vender
+		Usuario usuarioDonoAnuncio = usuarioRepository.findOne(recuperaAnuncio.getIdUsuario());
+		usuarioDonoAnuncio.vendeAnuncio(recuperaAnuncio.getPreco());
+
+		// excluir anuncio
+		anuncioRepository.delete(id);
+
+	}
+
 }
