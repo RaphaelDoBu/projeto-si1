@@ -1,6 +1,7 @@
 package br.edu.ufcg.computacao.si1.service;
 
 import br.edu.ufcg.computacao.si1.model.Anuncio;
+import br.edu.ufcg.computacao.si1.model.form.AnuncioForm;
 
 import java.util.Collection;
 import java.util.Date;
@@ -24,5 +25,7 @@ public interface AnuncioService {
     boolean update(Anuncio anuncio);
 
     boolean delete(Long id);
+    
+    Anuncio cadastrarAnuncio(AnuncioForm anuncioForm);
 
 }

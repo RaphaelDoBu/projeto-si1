@@ -35,11 +35,11 @@ public class CompanyAnuncioController {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 	@Autowired
-	private UsuarioServiceImpl usuarioImpl;
+	private UsuarioServiceImpl usuarioServiceImpl;
 
 	@RequestMapping(value = "/company/cadastrar/anuncio", method = RequestMethod.GET)
 	public ModelAndView getPageCadastarAnuncio(AnuncioForm anuncioForm) {
-		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
+		Usuario usuarioLogado = usuarioServiceImpl.usuarioLogadoEmail();
 		ModelAndView model = new ModelAndView();
 		
 		model.addObject("saldoCredor", usuarioLogado.getSaldoCredor());
@@ -53,7 +53,7 @@ public class CompanyAnuncioController {
 
 	@RequestMapping(value = "/company/listar/anuncios", method = RequestMethod.GET)
 	public ModelAndView getPageListarAnuncios(Model mod) {
-		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
+		Usuario usuarioLogado = usuarioServiceImpl.usuarioLogadoEmail();
 		Long idUsuario = usuarioLogado.getId();
 		ModelAndView model = new ModelAndView();
 		
@@ -75,15 +75,7 @@ public class CompanyAnuncioController {
 			return getPageCadastarAnuncio(anuncioForm);
 		}
 
-		Anuncio anuncio = new Anuncio();
-		anuncio.setTitulo(anuncioForm.getTitulo());
-		anuncio.setPreco(anuncioForm.getPreco());
-		anuncio.setTipo(anuncioForm.getTipo());
-
-		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
-		Long idUsuario = usuarioLogado.getId();
-		anuncio.setIdUsuario(idUsuario);
-		anuncioService.create(anuncio);
+		anuncioService.cadastrarAnuncio(anuncioForm);
 		
 		attributes.addFlashAttribute("mensagem", "Anúncio cadastrado com sucesso!");
 		return new ModelAndView("redirect:/company/cadastrar/anuncio");
@@ -92,7 +84,7 @@ public class CompanyAnuncioController {
 	@RequestMapping(value = "/company/listar/anuncios/{tipo}", method = RequestMethod.GET)
 	public ModelAndView buscarAnunciosPorTipo(@PathVariable String tipo,
 			Model mod) {
-		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
+		Usuario usuarioLogado = usuarioServiceImpl.usuarioLogadoEmail();
 		
 		Long idUsuario = usuarioLogado.getId();
 		ModelAndView model = new ModelAndView();
@@ -114,7 +106,7 @@ public class CompanyAnuncioController {
 	public ModelAndView buscarAnunciosPorData(@RequestParam("data") String data,
 			Model mod) throws ParseException {
 		ModelAndView model = new ModelAndView();
-		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
+		Usuario usuarioLogado = usuarioServiceImpl.usuarioLogadoEmail();
     	Long idUsuario = usuarioLogado.getId();
     	
     	mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
@@ -134,7 +126,7 @@ public class CompanyAnuncioController {
 	// Listar anuncio por usuario
 	@RequestMapping(value = "/company/listar/anuncios/usuario", method = RequestMethod.GET)
 	public ModelAndView buscarAnunciosPorUsuario(Model mod) {
-		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
+		Usuario usuarioLogado = usuarioServiceImpl.usuarioLogadoEmail();
 		
 		Long idUsuario = usuarioLogado.getId();
 		ModelAndView model = new ModelAndView();
@@ -154,13 +146,13 @@ public class CompanyAnuncioController {
 	}
 
 	public Long getIdUsuario() {
-		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
+		Usuario usuarioLogado = usuarioServiceImpl.usuarioLogadoEmail();
 		return usuarioLogado.getId();
 	}
 
 	@RequestMapping(value = "/company/anuncio/comprado/{id}", method = RequestMethod.GET)
 	public ModelAndView comprarAnuncioCompany(@PathVariable Long id, Model model) {
-		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
+		Usuario usuarioLogado = usuarioServiceImpl.usuarioLogadoEmail();
 		
 		Long idUsuario = usuarioLogado.getId();
 

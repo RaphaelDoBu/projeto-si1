@@ -1,7 +1,10 @@
 package br.edu.ufcg.computacao.si1.service;
 
 import br.edu.ufcg.computacao.si1.model.Anuncio;
+import br.edu.ufcg.computacao.si1.model.Usuario;
+import br.edu.ufcg.computacao.si1.model.form.AnuncioForm;
 import br.edu.ufcg.computacao.si1.repository.AnuncioRepository;
+import br.edu.ufcg.computacao.si1.repository.UsuarioRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,8 +23,13 @@ import java.util.stream.Collectors;
 public class AnuncioServiceImpl implements AnuncioService {
     //TODO add validity checks
 
+	@Autowired
     private AnuncioRepository anuncioRepository;
-
+	@Autowired
+	private AnuncioServiceImpl anuncioService;
+	@Autowired
+	private UsuarioServiceImpl usuarioServiceImpl;
+	
     @Autowired
     public AnuncioServiceImpl(AnuncioRepository anuncioRepository) {
         /*neste codigo apenas atribuimos o repositorio jpa ao atributo */
@@ -87,6 +95,21 @@ public class AnuncioServiceImpl implements AnuncioService {
 	public Collection<Anuncio> getAnuncioByDateFormat(Date data) {
 		return anuncioRepository.getAnuncioByDataDeCriacao(data);
 	}
+	
+
+    @Override
+    public Anuncio cadastrarAnuncio(AnuncioForm anuncioForm) {
+    	Anuncio anuncio = new Anuncio();
+		anuncio.setTitulo(anuncioForm.getTitulo());
+		anuncio.setPreco(anuncioForm.getPreco());
+		anuncio.setTipo(anuncioForm.getTipo());
+
+		Usuario usuarioLogado = usuarioServiceImpl.usuarioLogadoEmail();
+		Long idUsuario = usuarioLogado.getId();
+		anuncio.setIdUsuario(idUsuario);
+		
+        return anuncioService.create(anuncio);
+    }
 
 	
 }

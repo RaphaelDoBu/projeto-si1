@@ -79,17 +79,7 @@ public class UsuarioAnuncioController {
 			return getPageCadastrarAnuncio(anuncioForm);
 		}
 
-		Anuncio anuncio = new Anuncio();
-		anuncio.setTitulo(anuncioForm.getTitulo());
-		anuncio.setPreco(anuncioForm.getPreco());
-		anuncio.setTipo(anuncioForm.getTipo());
-
-		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
-		Long idUsuario = usuarioLogado.getId();
-
-		anuncio.setIdUsuario(idUsuario);
-
-		anuncioService.create(anuncio);
+		anuncioService.cadastrarAnuncio(anuncioForm);
 
 		attributes.addFlashAttribute("mensagem", "Anúncio cadastrado com sucesso!");
 		return new ModelAndView("redirect:/user/cadastrar/anuncio");
@@ -99,12 +89,11 @@ public class UsuarioAnuncioController {
 	public ModelAndView buscarAnunciosPorUsuario(Model mod) {
 
 		Usuario usuarioLogado = usuarioImpl.usuarioLogadoEmail();
-
-		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
-		mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
 		Long idUsuario = usuarioLogado.getId();
 		ModelAndView model = new ModelAndView();
 
+		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
+		mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
 		model.addObject("anuncios", anuncioRep.findAll());
 		model.addObject("idUsuario", idUsuario);
 
