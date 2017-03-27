@@ -43,7 +43,6 @@ public class CompanyAnuncioController {
 		ModelAndView model = new ModelAndView();
 		
 		model.addObject("saldoCredor", usuarioLogado.getSaldoCredor());
-		model.addObject("saldoDevedor", usuarioLogado.getSaldoDevedor());
 
 		model.addObject("tipos", anuncioForm.getTipos());
 		model.setViewName("company/cadastrar_anuncio");
@@ -58,7 +57,6 @@ public class CompanyAnuncioController {
 		ModelAndView model = new ModelAndView();
 		
 		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
-		mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
 		model.addObject("anuncios", anuncioRep.findAll());
 		model.addObject("idUsuario", idUsuario);
 
@@ -90,7 +88,6 @@ public class CompanyAnuncioController {
 		ModelAndView model = new ModelAndView();
 		
 		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
-    	mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
     	
 		model.addObject("anuncios", anuncioRep.findAll());
 		model.addObject("idUsuario", idUsuario);
@@ -110,7 +107,6 @@ public class CompanyAnuncioController {
     	Long idUsuario = usuarioLogado.getId();
     	
     	mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
-    	mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
 		model.addObject("anuncios", anuncioRep.findAll());
 		model.addObject("idUsuario", idUsuario);
 
@@ -132,7 +128,6 @@ public class CompanyAnuncioController {
 		ModelAndView model = new ModelAndView();
 
 		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
-    	mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
 		model.addObject("anuncios", anuncioRep.findAll());
 		model.addObject("idUsuario", idUsuario);
 		model.addObject("anuncios", anuncioService.getAnuncioRepository().getAnuncioByIdUsuario(getIdUsuario()));

@@ -1,10 +1,8 @@
 package br.edu.ufcg.computacao.si1.controller;
 
-import br.edu.ufcg.computacao.si1.model.Anuncio;
 import br.edu.ufcg.computacao.si1.model.Usuario;
 import br.edu.ufcg.computacao.si1.model.form.AnuncioForm;
 import br.edu.ufcg.computacao.si1.repository.AnuncioRepository;
-import br.edu.ufcg.computacao.si1.repository.UsuarioRepository;
 import br.edu.ufcg.computacao.si1.service.AnuncioServiceImpl;
 import br.edu.ufcg.computacao.si1.service.UsuarioServiceImpl;
 
@@ -12,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,9 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.validation.Valid;
 
@@ -34,8 +28,6 @@ public class UsuarioAnuncioController {
 
 	@Autowired
 	private AnuncioServiceImpl anuncioService;
-	@Autowired
-	private UsuarioRepository usuarioRepository;
 	@Autowired
 	private AnuncioRepository anuncioRep;
 	@Autowired
@@ -47,7 +39,6 @@ public class UsuarioAnuncioController {
 		ModelAndView model = new ModelAndView();
 
 		model.addObject("saldoCredor", usuarioLogado.getSaldoCredor());
-		model.addObject("saldoDevedor", usuarioLogado.getSaldoDevedor());
 
 		model.addObject("tipos", anuncioForm.getTipos());
 		model.setViewName("user/cadastrar_anuncio");
@@ -60,7 +51,6 @@ public class UsuarioAnuncioController {
 		Usuario usuarioLogado = usuarioServiceImpl.usuarioLogadoEmail();
 
 		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
-		mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
 		Long idUsuario = usuarioLogado.getId();
 		ModelAndView model = new ModelAndView();
 
@@ -93,7 +83,6 @@ public class UsuarioAnuncioController {
 		ModelAndView model = new ModelAndView();
 
 		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
-		mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
 		model.addObject("anuncios", anuncioRep.findAll());
 		model.addObject("idUsuario", idUsuario);
 
@@ -111,7 +100,6 @@ public class UsuarioAnuncioController {
 		ModelAndView model = new ModelAndView();
 		
 		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
-		mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
 		model.addObject("anuncios", anuncioRep.findAll());
 		model.addObject("idUsuario", idUsuario);
 
@@ -129,7 +117,6 @@ public class UsuarioAnuncioController {
 		Long idUsuario = usuarioLogado.getId();
 		
 		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
-		mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
 		model.addObject("anuncios", anuncioRep.findAll());
 		model.addObject("idUsuario", idUsuario);
 
