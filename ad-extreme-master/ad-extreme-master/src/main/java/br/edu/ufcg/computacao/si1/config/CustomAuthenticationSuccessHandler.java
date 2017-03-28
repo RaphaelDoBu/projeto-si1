@@ -58,15 +58,20 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                 isAdmin = true;
             }
         }
-
-        if (isUser) {
-            return "/user";
-        } else if (isAdmin) {
-            return "/company";
-        } else {
-            throw new IllegalStateException();
-        }
+        return typeUser(isUser, isAdmin);  //retiragem do bad smell
+       
     }
+    
+    protected String typeUser(boolean isUser, boolean isAdmin){
+    	 if (isUser) {
+             return "/user";
+         } else if (isAdmin) {
+             return "/company";
+         } else {
+             throw new IllegalStateException();
+         }
+    }
+    
 
     protected void clearAuthenticationAttributes(final HttpServletRequest
                                                          request) {
