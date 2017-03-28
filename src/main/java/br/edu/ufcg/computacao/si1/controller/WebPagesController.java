@@ -38,7 +38,6 @@ public class WebPagesController {
 
 		Usuario usuarioLogado = usuarioRepository.findByEmail(uc.getUsuario().getEmail());
 		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
-		mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
 
 		ModelAndView model = new ModelAndView();
 
@@ -54,8 +53,7 @@ public class WebPagesController {
 
 		Usuario usuarioLogado = usuarioRepository.findByEmail(uc.getUsuario().getEmail());
 		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
-		mod.addAttribute("saldoDevedor", usuarioLogado.getSaldoDevedor());
-
+		
 		ModelAndView model = new ModelAndView();
 		mod.addAttribute("user", usuarioLogado.getNome());
 		model.setViewName("company/index");
