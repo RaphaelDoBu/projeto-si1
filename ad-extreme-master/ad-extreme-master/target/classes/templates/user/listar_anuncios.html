@@ -11,7 +11,10 @@
 </head>
 <th:block layout:fragment="conteudo">
 	<div class="col-md-offset-2 col-md-8">
-		<h1>Anúncios</h1>
+		<div class="tipo-anuncio">
+			<h1>Todos os Anúncios</h1>
+			<h1 th:text="${tipo}"></h1>
+		</div>
 		<!-- Text input-->
 		<div th:if="${anuncios.isEmpty()}">
 			<h4>Nenhum Anúncio listado</h4>

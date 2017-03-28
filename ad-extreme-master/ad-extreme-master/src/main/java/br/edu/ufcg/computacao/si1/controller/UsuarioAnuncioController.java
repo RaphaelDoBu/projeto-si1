@@ -102,7 +102,7 @@ public class UsuarioAnuncioController {
 		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
 		model.addObject("anuncios", anuncioRep.findAll());
 		model.addObject("idUsuario", idUsuario);
-
+		mod.addAttribute("tipo", tipo);
 		model.addObject("anuncios", anuncioService.getAnuncioRepository().getAnuncioByTipo(tipo));
 
 		model.setViewName("user/listar_anuncios");

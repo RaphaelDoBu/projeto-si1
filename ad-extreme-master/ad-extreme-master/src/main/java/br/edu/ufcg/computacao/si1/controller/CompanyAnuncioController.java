@@ -59,7 +59,6 @@ public class CompanyAnuncioController {
 		mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
 		model.addObject("anuncios", anuncioRep.findAll());
 		model.addObject("idUsuario", idUsuario);
-
 		model.setViewName("company/listar_anuncios");
 
 		return model;
@@ -91,9 +90,8 @@ public class CompanyAnuncioController {
     	
 		model.addObject("anuncios", anuncioRep.findAll());
 		model.addObject("idUsuario", idUsuario);
-
+		mod.addAttribute("tipo", tipo);
 		model.addObject("anuncios", anuncioService.getAnuncioRepository().getAnuncioByTipo(tipo));
-
 		model.setViewName("company/listar_anuncios");
 
 		return model;
@@ -109,7 +107,6 @@ public class CompanyAnuncioController {
     	mod.addAttribute("saldoCredor", usuarioLogado.getSaldoCredor());
 		model.addObject("anuncios", anuncioRep.findAll());
 		model.addObject("idUsuario", idUsuario);
-
 		SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
 		Date aux = formato.parse(data);
 		model.addObject("anuncios", anuncioService.getAnuncioRepository().getAnuncioByDataDeCriacao(aux));
